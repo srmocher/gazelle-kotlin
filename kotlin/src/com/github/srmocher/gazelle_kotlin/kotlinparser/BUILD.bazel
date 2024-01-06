@@ -1,0 +1,20 @@
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library", "kt_jvm_binary")
+
+kt_jvm_library(
+    name = "parser_lib",
+    srcs = [
+        "GrpcServer.kt",
+        "Main.kt",
+    ],
+    deps = [
+        "//kotlin/protobuf:kt_proto",
+    ]
+)
+
+java_binary(
+    name = "parser_server",
+    runtime_deps = [
+        ":parser_lib"
+    ],
+    main_class = "com.github.srmocher.gazelle_kotlin.kotlinparser.Main"
+)

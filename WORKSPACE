@@ -61,6 +61,7 @@ rules_jvm_external_setup()
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 GRPC_JAVA_TAG = "1.60.1"
+GRPC_KOTLIN_TAG = "1.4.1"
 
 http_archive(
     name = "io_grpc_grpc_java",
@@ -69,11 +70,20 @@ http_archive(
     strip_prefix = "grpc-java-{version}".format(version = GRPC_JAVA_TAG)
 )
 
-load("@io_grpc_grpc_java//:repositories.bzl", "IO_GRPC_GRPC_JAVA_ARTIFACTS")
-load("@io_grpc_grpc_java//:repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS")
-load("@io_grpc_grpc_java//:repositories.bzl", "grpc_java_repositories")
+http_archive(
+    name = "com_github_grpc_grpc_kotlin",
+    url = "https://github.com/grpc/grpc-kotlin/archive/refs/tags/v{version}.tar.gz".format(version = GRPC_KOTLIN_TAG),
+    sha256 = "ebe0497ce15bc299501edaa86a0cb9586cc3ac70bf8464a3c1c3df6615260223",
+    strip_prefix = "grpc-kotlin-{version}".format(version = GRPC_KOTLIN_TAG)
+)
+
+load("@io_grpc_grpc_java//:repositories.bzl", "IO_GRPC_GRPC_JAVA_ARTIFACTS", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS", "grpc_java_repositories")
 
 grpc_java_repositories()
+
+load("@com_github_grpc_grpc_kotlin//:repositories.bzl", "IO_GRPC_GRPC_KOTLIN_ARTIFACTS", "IO_GRPC_GRPC_KOTLIN_OVERRIDE_TARGETS", "grpc_kt_repositories")
+
+grpc_kt_repositories()
 
 load("@com_google_protobuf//:protobuf_deps.bzl", "PROTOBUF_MAVEN_ARTIFACTS")
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
@@ -89,10 +99,11 @@ maven_install(
         "io.grpc:grpc-stub:1.40.0",
         "org.slf4j:slf4j-simple:1.7.32",
         "com.google.code.findbugs:jsr305:3.0.2",
+        "com.google.protobuf:protobuf-kotlin:3.24.0",
         
         # KSP for parsing Kotlin source
-        "com.google.devtools.ksp:symbol-processing-api:1.9.20-1.0.14",
-    ] + IO_GRPC_GRPC_JAVA_ARTIFACTS + PROTOBUF_MAVEN_ARTIFACTS,
+        "com.google.devtools.ksp:symbol-processing-api:1.8.20-1.0.11",
+    ] + IO_GRPC_GRPC_JAVA_ARTIFACTS + PROTOBUF_MAVEN_ARTIFACTS + IO_GRPC_GRPC_KOTLIN_ARTIFACTS,
     repositories = [
         "https://maven.google.com",
         "https://repo1.maven.org/maven2",
@@ -108,3 +119,8 @@ pinned_maven_install()
 load("@maven//:compat.bzl", "compat_repositories")
 
 compat_repositories()
+
+load("@io_bazel_rules_kotlin//kotlin:repositories.bzl", "kotlin_repositories")
+kotlin_repositories() # if you want the default. Otherwise see custom kotlinc distribution below
+
+register_toolchains("//:kotlin_toolchain") # to use the default toolchain, otherwise see toolchains below
