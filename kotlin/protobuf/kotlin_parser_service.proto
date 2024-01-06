@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package protobuf;
+
+option java_package = 'com.github.srmocher.protobuf';
+
+import "kotlin/protobuf/kotlin_parser.proto";
+
+service KotlinParser {
+    rpc ParseKotlinFiles(KotlinParserRequest) returns (KotlinParserResponse) {}
+    rpc ParseJavaFiles(JavaParserRequest) returns (JavaParserResponse) {}
+}

@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "kotlin",
+    srcs = [
+        "config.go",
+        "generate.go",
+        "kinds.go",
+        "lang.go",
+        "resolve.go",
+    ],
+    importpath = "github.com/srmocher/gazelle-kotlin/kotlin",
+    visibility = ["//visibility:public"],
+    deps = ["@bazel_gazelle//rule:go_default_library"],
+)

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package protobuf;
+
+option java_package = 'com.github.srmocher.protobuf';
+
+message KotlinParserRequest {
+    repeated string kotlin_source_file = 1;
+}
+
+message JavaParserRequest {
+    repeated string java_source_file = 1;
+}
+
+message KotlinParserResponse {
+    map<string, SourceFileInfo> source_file_info = 1;
+}
+
+message JavaParserResponse {
+    map<string, SourceFileInfo> source_file_info = 1;
+}
+
+message SourceFileInfo {
+    string file_name = 1;
+    string package = 2;
+    repeated string imports = 3;
+    repeated string annotations = 4;
+}
