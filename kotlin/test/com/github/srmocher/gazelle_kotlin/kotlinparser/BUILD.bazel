@@ -1,0 +1,13 @@
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_test")
+
+kt_jvm_test(
+    name = "parser_test",
+    srcs = ["ParserTest.kt"],
+    data = ["//kotlin/test/com/github/srmocher/gazelle_kotlin/kotlinparser/testdata"],
+    test_class = "com.github.srmocher.gazelle_kotlin.kotlinparser.ParserTest",
+    deps = [
+        "//kotlin/src/com/github/srmocher/gazelle_kotlin/kotlinparser:parser_lib",
+        "@bazel_tools//tools/java/runfiles",
+        "@maven//:junit_junit",
+    ],
+)

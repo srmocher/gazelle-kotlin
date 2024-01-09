@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package protobuf;
 
-option java_package = 'com.github.srmocher.protobuf';
+option java_package = 'com.github.srmocher.gazelle_kotlin.kotlinparser';
+option java_multiple_files = true;
+option java_outer_classname = "KotlinParserProto";
 
 message KotlinParserRequest {
     repeated string kotlin_source_file = 1;
@@ -13,16 +15,15 @@ message JavaParserRequest {
 }
 
 message KotlinParserResponse {
-    map<string, SourceFileInfo> source_file_info = 1;
+    repeated SourceFileInfo source_file_infos = 1;
 }
 
 message JavaParserResponse {
-    map<string, SourceFileInfo> source_file_info = 1;
+    repeated SourceFileInfo source_file_infos = 1;
 }
 
 message SourceFileInfo {
     string file_name = 1;
-    string package = 2;
+    string package_name = 2;
     repeated string imports = 3;
-    repeated string annotations = 4;
 }

@@ -2,7 +2,8 @@ syntax = "proto3";
 
 package protobuf;
 
-option java_package = 'com.github.srmocher.protobuf';
+option java_package = 'com.github.srmocher.gazelle_kotlin.kotlinparser';
+option java_multiple_files = true;
 
 import "kotlin/protobuf/kotlin_parser.proto";
 

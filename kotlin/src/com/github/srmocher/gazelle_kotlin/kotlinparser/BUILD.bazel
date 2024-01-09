@@ -1,20 +1,33 @@
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library", "kt_jvm_binary")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary", "kt_jvm_library")
 
 kt_jvm_library(
     name = "parser_lib",
     srcs = [
-        "GrpcServer.kt",
+        "KotlinParserServer.kt",
         "Main.kt",
+        "Parser.kt",
     ],
+    visibility = ["//kotlin:__subpackages__"],
     deps = [
+        "//kotlin/protobuf:kt_grpc_lib",
         "//kotlin/protobuf:kt_proto",
-    ]
+        "@maven//:com_github_kotlinx_ast_common_jvm",
+        "@maven//:com_github_kotlinx_ast_grammar_kotlin_parser_antlr_kotlin_jvm",
+        "@maven//:com_github_kotlinx_ast_grammar_kotlin_parser_common_jvm",
+        "@maven//:com_github_kotlinx_ast_parser_antlr_kotlin_jvm",
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:com_google_protobuf_protobuf_kotlin",
+        "@maven//:io_arrow_kt_arrow_core_jvm",
+        "@maven//:io_arrow_kt_arrow_fx_coroutines_jvm",
+        "@maven//:io_grpc_grpc_api",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
+    ],
 )
 
 java_binary(
     name = "parser_server",
+    main_class = "com.github.srmocher.gazelle_kotlin.kotlinparser.Main",
     runtime_deps = [
-        ":parser_lib"
+        ":parser_lib",
     ],
-    main_class = "com.github.srmocher.gazelle_kotlin.kotlinparser.Main"
 )

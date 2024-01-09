@@ -1,0 +1,9 @@
+filegroup(
+    name = "testdata",
+    srcs = [
+        "ExampleFile.kt",
+        "ExampleFile2.kt",
+        "InvalidKotlinFile.kt",
+    ],
+    visibility = ["//kotlin/test:__subpackages__"],
+)
