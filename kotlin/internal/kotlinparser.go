@@ -33,6 +33,7 @@ func (kp *KotlinParser) startServer() {
 	}
 
 	kp.parserServerPid = cmd.Process.Pid
+	// run server in backgroun
 	go func() {
 		if err := cmd.Wait(); err != nil {
 			log.Printf("Server command failed: %s", err)
