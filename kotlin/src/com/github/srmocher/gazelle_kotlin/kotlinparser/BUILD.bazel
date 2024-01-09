@@ -27,6 +27,7 @@ kt_jvm_library(
 java_binary(
     name = "parser_server",
     main_class = "com.github.srmocher.gazelle_kotlin.kotlinparser.Main",
+    visibility = ["//kotlin:__subpackages__"],
     runtime_deps = [
         ":parser_lib",
     ],
