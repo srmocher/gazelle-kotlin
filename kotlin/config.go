@@ -27,7 +27,7 @@ type kotlinConfig struct {
 }
 
 func newKotlinConfig() *kotlinConfig {
-	kc := &kotlinConfig{
+	return &kotlinConfig{
 		rulesKotlinRepoName: defaultRulesKotlinRepoName,
 		ktGenerateProto:     false,
 	}
@@ -44,12 +44,16 @@ func (*kotlinLang) KnownDirectives() []string {
 	}
 }
 
+func (kc *kotlinConfig) clone() *kotlinConfig {
+	return kc
+}
+
 func (*kotlinLang) Configure(c *config.Config, rel string, f *rule.File) {
 	var kc *kotlinConfig
 	if raw, ok := c.Exts[kotlinName]; !ok {
-		gc = newKotlinConfig()
+		kc = newKotlinConfig()
 	} else {
-		gc = raw.(*kotlinConfig).clone()
+		kc = raw.(*kotlinConfig).clone()
 	}
 
 	c.Exts[kotlinName] = kc
@@ -58,10 +62,10 @@ func (*kotlinLang) Configure(c *config.Config, rel string, f *rule.File) {
 	}
 }
 
-func (*kotlinLang) CheckFlags(fs *flag.FlagSet, c *Config) error {
+func (*kotlinLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	return nil
 }
 
-func (*kotlinLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *Config) {
-	return nil
+func (*kotlinLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+	return
 }

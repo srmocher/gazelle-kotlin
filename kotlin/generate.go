@@ -5,5 +5,5 @@ import (
 )
 
 func (*kotlinLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
-	return nil
+	return language.GenerateResult{}
 }
