@@ -4,6 +4,7 @@ go_library(
     name = "kotlin",
     srcs = [
         "config.go",
+        "fix.go",
         "generate.go",
         "kinds.go",
         "lang.go",
@@ -11,5 +12,9 @@ go_library(
     ],
     importpath = "github.com/srmocher/gazelle-kotlin/kotlin",
     visibility = ["//visibility:public"],
-    deps = ["@bazel_gazelle//rule:go_default_library"],
+    deps = [
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//language:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+    ],
 )

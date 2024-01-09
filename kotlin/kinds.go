@@ -21,3 +21,11 @@ var kotlinKinds = map[string]rule.KindInfo{
 		},
     }
 }
+
+func(*kotlinLang) Loads() []rule.LoadInfo {
+    return nil
+}
+
+func(*kotlinLang) Fix(c *config.Config, f *rule.File) {
+    return nil
+}

@@ -35,14 +35,12 @@ class KotlinParserServer(private val port: Int) {
     internal class KotlinParserService : KotlinParserGrpcKt.KotlinParserCoroutineImplBase() {
         val parser = Parser()
         override suspend fun parseKotlinFiles(request: KotlinParserRequest): KotlinParserResponse {
-            val result = parser.parseKtFiles(request.kotlinSourceFileList)
-            when (result) {
+            when (val result = parser.parseKtFiles(request.kotlinSourceFileList)) {
                 is Either.Left -> throw StatusException(Status.INTERNAL)
                 is Either.Right -> {
-                    val response = KotlinParserResponse.newBuilder()
+                    return KotlinParserResponse.newBuilder()
                         .addAllSourceFileInfos(result.value)
                         .build()
-                    return response
                 }
             }
         }
