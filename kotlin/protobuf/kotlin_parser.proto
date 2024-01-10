@@ -8,6 +8,8 @@ option java_outer_classname = "KotlinParserProto";
 
 option go_package = 'github.com/srmocher/gazelle-kotlin/kotlin/protobuf';
 
+import "google/rpc/status.proto";
+
 message KotlinParserRequest {
     repeated string kotlin_source_file = 1;
 }
@@ -18,10 +20,12 @@ message JavaParserRequest {
 
 message KotlinParserResponse {
     repeated SourceFileInfo source_file_infos = 1;
+    google.rpc.Status error = 2;
 }
 
 message JavaParserResponse {
     repeated SourceFileInfo source_file_infos = 1;
+    google.rpc.Status error = 2;
 }
 
 message SourceFileInfo {

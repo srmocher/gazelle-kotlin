@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -14,7 +15,7 @@ import (
 )
 
 const (
-	kotlinParserAddr = "[::1]:50051"
+	kotlinParserAddr = "localhost:50051"
 )
 
 type KotlinParser struct {
@@ -84,6 +85,10 @@ func (kp *KotlinParser) ParseKotlinFiles(files []string) ([]*pb.SourceFileInfo, 
 
 	if err != nil {
 		return nil, err
+	}
+
+	if r.GetError() != nil {
+		return nil, fmt.Errorf("Failed to parse Kotlin files: %s", r.GetError().GetMessage())
 	}
 
 	return r.GetSourceFileInfos(), nil

@@ -2,6 +2,9 @@ load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@io_bazel_rules_kotlin//kotlin:core.bzl", "define_kt_toolchain")
 
 # gazelle:prefix github.com/srmocher/gazelle-kotlin
+# gazelle:resolve proto proto google/rpc/status.proto @googleapis//google/rpc:status_proto
+# gazelle:resolve proto go google/rpc/status.proto  @org_golang_google_genproto_googleapis_rpc//status:status
+# gazelle:resolve proto go google.golang.org/grpc/internal/status @googleapis//google/rpc:status_go_proto
 gazelle(name = "gazelle")
 
 gazelle(

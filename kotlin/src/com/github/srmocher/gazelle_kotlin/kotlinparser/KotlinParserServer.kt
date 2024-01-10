@@ -1,15 +1,19 @@
 package com.github.srmocher.gazelle_kotlin.kotlinparser // ktlint-disable package-name
 
 import arrow.core.Either
-import io.grpc.Status
+import com.google.rpc.Status
+import com.google.rpc.StatusProto
 import io.grpc.StatusException
 import io.grpc.netty.NettyServerBuilder
+import io.grpc.protobuf.services.ProtoReflectionService
 import java.net.InetSocketAddress
+
 
 data class KotlinParserError(val message: String)
 class KotlinParserServer(private val port: Int) {
     val server = NettyServerBuilder.forAddress(InetSocketAddress("[::1]", port))
         .addService(KotlinParserService())
+            .addService(ProtoReflectionService.newInstance())
         .build()
 
     fun start() {
@@ -35,12 +39,22 @@ class KotlinParserServer(private val port: Int) {
     internal class KotlinParserService : KotlinParserGrpcKt.KotlinParserCoroutineImplBase() {
         val parser = Parser()
         override suspend fun parseKotlinFiles(request: KotlinParserRequest): KotlinParserResponse {
-            when (val result = parser.parseKtFiles(request.kotlinSourceFileList)) {
-                is Either.Left -> throw StatusException(Status.INTERNAL)
+            println("Received request to parse ${request.kotlinSourceFileList.count()}")
+            return when (val result = parser.parseKtFiles(request.kotlinSourceFileList)) {
+                is Either.Left -> {
+                    val status = Status.newBuilder()
+                            .setCode(13)
+                            .setMessage(result.value.message)
+                            .build()
+                    KotlinParserResponse.newBuilder()
+                            .setError(status)
+                            .build()
+                }
+
                 is Either.Right -> {
-                    return KotlinParserResponse.newBuilder()
-                        .addAllSourceFileInfos(result.value)
-                        .build()
+                    KotlinParserResponse.newBuilder()
+                            .addAllSourceFileInfos(result.value)
+                            .build()
                 }
             }
         }

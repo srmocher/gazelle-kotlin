@@ -21,6 +21,7 @@ kt_jvm_library(
         "@maven//:io_arrow_kt_arrow_fx_coroutines_jvm",
         "@maven//:io_grpc_grpc_api",
         "@maven//:io_grpc_grpc_netty",
+        "@maven//:io_grpc_grpc_services",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
     ],
 )

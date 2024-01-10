@@ -10,6 +10,7 @@ proto_library(
         "kotlin_parser_service.proto",
     ],
     visibility = ["//visibility:public"],
+    deps = ["@googleapis//google/rpc:status_proto"],
 )
 
 go_proto_library(
@@ -18,6 +19,7 @@ go_proto_library(
     importpath = "github.com/srmocher/gazelle-kotlin/kotlin/protobuf",
     proto = ":protobuf_proto",
     visibility = ["//visibility:public"],
+    deps = ["@org_golang_google_genproto_googleapis_rpc//status"],
 )
 
 go_library(
@@ -30,12 +32,16 @@ go_library(
 kt_jvm_proto_library(
     name = "kt_proto",
     visibility = ["//kotlin:__subpackages__"],
-    deps = [":protobuf_proto"],
+    deps = [
+        ":protobuf_proto",
+    ],
 )
 
 kt_jvm_grpc_library(
     name = "kt_grpc_lib",
     srcs = [":protobuf_proto"],
     visibility = ["//kotlin:__subpackages__"],
-    deps = [":kt_proto"],
+    deps = [
+        ":kt_proto",
+    ],
 )
