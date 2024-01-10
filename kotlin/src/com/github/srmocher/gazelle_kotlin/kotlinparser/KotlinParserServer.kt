@@ -1,14 +1,14 @@
 package com.github.srmocher.gazelle_kotlin.kotlinparser // ktlint-disable package-name
 
 import arrow.core.Either
-import io.grpc.Server
-import io.grpc.ServerBuilder
 import io.grpc.Status
 import io.grpc.StatusException
+import io.grpc.netty.NettyServerBuilder
+import java.net.InetSocketAddress
 
 data class KotlinParserError(val message: String)
 class KotlinParserServer(private val port: Int) {
-    val server: Server = ServerBuilder.forPort(port)
+    val server = NettyServerBuilder.forAddress(InetSocketAddress("[::1]", port))
         .addService(KotlinParserService())
         .build()
 

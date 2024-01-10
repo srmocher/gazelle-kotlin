@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"log"
+	"os"
 	"os/exec"
 	"time"
 
@@ -13,7 +14,7 @@ import (
 )
 
 const (
-	kotlinParserAddr = "localhost:50051"
+	kotlinParserAddr = "[::1]:50051"
 )
 
 type KotlinParser struct {
@@ -39,32 +40,38 @@ func getServerBinaryPathAndEnv() (string, []string) {
 func (kp *KotlinParser) startServer() {
 	cmd := exec.Command(kp.parserServerBinaryPath)
 	cmd.Env = kp.parserServerBinaryEnv
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
 		log.Fatalf("Could not start parser server: %s", err)
 	}
 
 	kp.parserServerPid = cmd.Process.Pid
-	// run server in backgroun
+	log.Printf("Starting server with pid %d", cmd.Process.Pid)
+	// run server in background
 	go func() {
 		if err := cmd.Wait(); err != nil {
 			log.Printf("Server command failed: %s", err)
 		}
 	}()
+	time.Sleep(2)
 }
 
-func NewKotlinParser() *KotlinParser {
+func NewKotlinParser() (*KotlinParser, error) {
 	serverPath, env := getServerBinaryPathAndEnv()
+	kp := KotlinParser{
+		parserServerBinaryPath: serverPath,
+		parserServerBinaryEnv:  env,
+	}
+	kp.startServer()
 	conn, err := grpc.Dial(kotlinParserAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("did not connect to kotlin parser: %v", err)
+		return nil, err
 	}
 
 	c := pb.NewKotlinParserClient(conn)
-	return &KotlinParser{
-		parserServerBinaryPath: serverPath,
-		parserServerBinaryEnv:  env,
-		parserClient:           c,
-	}
+	kp.parserClient = c
+	return &kp, nil
 }
 
 func (kp *KotlinParser) ParseKotlinFiles(files []string) ([]*pb.SourceFileInfo, error) {

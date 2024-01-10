@@ -5,5 +5,5 @@ filegroup(
         "ExampleFile2.kt",
         "InvalidKotlinFile.kt",
     ],
-    visibility = ["//kotlin/test:__subpackages__"],
+    visibility = ["//kotlin:__subpackages__"],
 )
