@@ -12,5 +12,10 @@ go_library(
     ],
     importpath = "github.com/srmocher/gazelle-kotlin/kotlin/internal",
     visibility = ["//kotlin:__subpackages__"],
-    deps = ["@io_bazel_rules_go//go/runfiles:go_default_library"],
+    deps = [
+        "//kotlin/protobuf",
+        "@io_bazel_rules_go//go/runfiles:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+        "@org_golang_google_grpc//credentials/insecure",
+    ],
 )

@@ -6,6 +6,8 @@ option java_package = 'com.github.srmocher.gazelle_kotlin.kotlinparser';
 option java_multiple_files = true;
 option java_outer_classname = "KotlinParserProto";
 
+option go_package = 'github.com/srmocher/gazelle-kotlin/kotlin/protobuf';
+
 message KotlinParserRequest {
     repeated string kotlin_source_file = 1;
 }

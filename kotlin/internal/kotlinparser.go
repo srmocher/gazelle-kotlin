@@ -1,16 +1,27 @@
 package internal
 
 import (
+	"context"
 	"log"
 	"os/exec"
+	"time"
 
 	"github.com/bazelbuild/rules_go/go/runfiles"
+	pb "github.com/srmocher/gazelle-kotlin/kotlin/protobuf"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+)
+
+const (
+	kotlinParserAddr = "localhost:50051"
 )
 
 type KotlinParser struct {
 	parserServerBinaryPath string
 	parserServerBinaryEnv  []string
 	parserServerPid        int
+
+	parserClient pb.KotlinParserClient
 }
 
 func getServerBinaryPathAndEnv() (string, []string) {
@@ -43,8 +54,30 @@ func (kp *KotlinParser) startServer() {
 
 func NewKotlinParser() *KotlinParser {
 	serverPath, env := getServerBinaryPathAndEnv()
+	conn, err := grpc.Dial(kotlinParserAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("did not connect to kotlin parser: %v", err)
+	}
+
+	c := pb.NewKotlinParserClient(conn)
 	return &KotlinParser{
 		parserServerBinaryPath: serverPath,
 		parserServerBinaryEnv:  env,
+		parserClient:           c,
 	}
+}
+
+func (kp *KotlinParser) ParseKotlinFiles(files []string) ([]*pb.SourceFileInfo, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	r, err := kp.parserClient.ParseKotlinFiles(ctx, &pb.KotlinParserRequest{
+		KotlinSourceFile: files,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.GetSourceFileInfos(), nil
 }

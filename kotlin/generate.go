@@ -5,5 +5,6 @@ import (
 )
 
 func (*kotlinLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
+	cfg := args.Config
 	return language.GenerateResult{}
 }

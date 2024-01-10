@@ -4,6 +4,7 @@ package protobuf;
 
 option java_package = 'com.github.srmocher.gazelle_kotlin.kotlinparser';
 option java_multiple_files = true;
+option go_package = 'github.com/srmocher/gazelle-kotlin/kotlin/protobuf';
 
 import "kotlin/protobuf/kotlin_parser.proto";
 

@@ -3,3 +3,4 @@ bazel-gazelle-kotlin
 bazel-out
 bazel-testlogs
 .ijwb/
+kotlin/protobuf/*.pb.go
