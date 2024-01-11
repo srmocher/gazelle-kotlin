@@ -12,18 +12,23 @@ import (
 
 var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9 ]+`)
 
+// MavenArtifact represents a maven artifact
+// It's maven coordinate, the set of packages it provides and the resolved Bazel label
 type MavenArtifact struct {
 	Coord      string
 	Packages   []string
 	BazelLabel string
 }
 
+// MavenInstallInfo represents the information extracted from maven_install.json
 type MavenInstallInfo struct {
 	mavenRepoName        string
 	mavenInstallJsonFile string
 	artifacts            []MavenArtifact
 }
 
+// mavenInstallJson represents the structure of maven_install.json and the fields we need
+// for extracting dependency information
 type mavenInstallJson struct {
 	depTree struct {
 		deps []struct {
@@ -47,9 +52,7 @@ func (mii *MavenInstallInfo) coordToBazelLabel(coord string) string {
 	return fmt.Sprintf("@%s://%s_%s", mii.mavenRepoName, groupId, artifactId)
 }
 
-func (mii *MavenInstallInfo) ProcessDeps() {
-	// placeholder to process maven_install.json and extract
-	// mapping of artifact ID to the set of packages/imports available
+func (mii *MavenInstallInfo) ProcessDeps() error {
 	if _, err := os.Stat(mii.mavenInstallJsonFile); err != nil {
 		log.Fatalf("maven file %s does not exist!", mii.mavenInstallJsonFile)
 	}
@@ -57,17 +60,17 @@ func (mii *MavenInstallInfo) ProcessDeps() {
 	f, err := os.Open(mii.mavenInstallJsonFile)
 	defer f.Close()
 	if err != nil {
-		log.Fatalf("unable to open file %s", mii.mavenInstallJsonFile)
+		return fmt.Errorf("unable to open file %s", mii.mavenInstallJsonFile)
 	}
 
 	b, err := io.ReadAll(f)
 	if err != nil {
-		log.Fatalf("error reading file %s", mii.mavenInstallJsonFile)
+		return fmt.Errorf("error reading file %s", mii.mavenInstallJsonFile)
 	}
 
 	var mvn mavenInstallJson
 	if err = json.Unmarshal(b, &mvn); err != nil {
-		log.Fatalf("Error extracting maven deps from json: %s", err)
+		return fmt.Errorf("Error extracting maven deps from json: %s", err)
 	}
 
 	var artifacts []MavenArtifact
@@ -80,8 +83,10 @@ func (mii *MavenInstallInfo) ProcessDeps() {
 	}
 
 	mii.artifacts = artifacts
+	return nil
 }
 
+// GetMavenArtifacts returns the set of MavenArtifacts extracted from the maven_install.json file
 func (mii *MavenInstallInfo) GetMavenArtifacts() []MavenArtifact {
 	return mii.artifacts
 }

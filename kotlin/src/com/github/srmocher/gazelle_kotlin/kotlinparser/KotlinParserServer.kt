@@ -3,18 +3,30 @@ package com.github.srmocher.gazelle_kotlin.kotlinparser // ktlint-disable packag
 import arrow.core.Either
 import com.google.rpc.Status
 import com.google.rpc.StatusProto
+import io.grpc.Server
 import io.grpc.StatusException
 import io.grpc.netty.NettyServerBuilder
 import io.grpc.protobuf.services.ProtoReflectionService
 import java.net.InetSocketAddress
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 data class KotlinParserError(val message: String)
 class KotlinParserServer(private val port: Int) {
-    val server = NettyServerBuilder.forAddress(InetSocketAddress("[::1]", port))
+    private val server: Server = NettyServerBuilder.forAddress(InetSocketAddress("[::1]", port))
         .addService(KotlinParserService())
             .addService(ProtoReflectionService.newInstance())
         .build()
+
+    private val pid = ProcessHandle.current().pid()
+    private val portFile = Paths.get("/tmp", "gazelle-kotlin", "kotlinparser.${pid}.port")
+
+    private fun storePortFile() {
+        Files.createDirectories(Paths.get("/tmp", "gazelle-kotlin"))
+        Files.write(portFile, listOf(port.toString()), StandardCharsets.UTF_8)
+    }
 
     fun start() {
         server.start()
@@ -26,6 +38,7 @@ class KotlinParserServer(private val port: Int) {
                 println("*** server shut down")
             },
         )
+        storePortFile()
     }
 
     private fun stop() {
@@ -37,7 +50,7 @@ class KotlinParserServer(private val port: Int) {
     }
 
     internal class KotlinParserService : KotlinParserGrpcKt.KotlinParserCoroutineImplBase() {
-        val parser = Parser()
+        private val parser = Parser()
         override suspend fun parseKotlinFiles(request: KotlinParserRequest): KotlinParserResponse {
             println("Received request to parse ${request.kotlinSourceFileList.count()}")
             return when (val result = parser.parseKtFiles(request.kotlinSourceFileList)) {

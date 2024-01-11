@@ -7,7 +7,6 @@ go_library(
         "maven.go",
     ],
     data = [
-        # keep
         "//kotlin/src/com/github/srmocher/gazelle_kotlin/kotlinparser:parser_server",
     ],
     importpath = "github.com/srmocher/gazelle-kotlin/kotlin/internal",
