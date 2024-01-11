@@ -30,10 +30,10 @@ type MavenInstallInfo struct {
 // mavenInstallJson represents the structure of maven_install.json and the fields we need
 // for extracting dependency information
 type mavenInstallJson struct {
-	depTree struct {
-		deps []struct {
-			coord    string   `json:"coord"`
-			packages []string `json:"packages"`
+	DepTree struct {
+		Deps []struct {
+			Coord    string   `json:"coord"`
+			Packages []string `json:"packages"`
 		} `json:"dependencies"`
 	} `json:"dependency_tree"`
 }
@@ -49,12 +49,12 @@ func (mii *MavenInstallInfo) coordToBazelLabel(coord string) string {
 	parts := strings.Split(coord, ":")
 	groupId := nonAlphanumericRegex.ReplaceAllString(parts[0], "_")
 	artifactId := nonAlphanumericRegex.ReplaceAllString(parts[1], "_")
-	return fmt.Sprintf("@%s://%s_%s", mii.mavenRepoName, groupId, artifactId)
+	return fmt.Sprintf("@%s//:%s_%s", mii.mavenRepoName, groupId, artifactId)
 }
 
 func (mii *MavenInstallInfo) ProcessDeps() error {
 	if _, err := os.Stat(mii.mavenInstallJsonFile); err != nil {
-		log.Fatalf("maven file %s does not exist!", mii.mavenInstallJsonFile)
+		return fmt.Errorf("maven file %s does not exist", mii.mavenInstallJsonFile)
 	}
 
 	f, err := os.Open(mii.mavenInstallJsonFile)
@@ -74,14 +74,15 @@ func (mii *MavenInstallInfo) ProcessDeps() error {
 	}
 
 	var artifacts []MavenArtifact
-	for _, dep := range mvn.depTree.deps {
+	for _, dep := range mvn.DepTree.Deps {
 		artifacts = append(artifacts, MavenArtifact{
-			Coord:      dep.coord,
-			Packages:   dep.packages,
-			BazelLabel: mii.coordToBazelLabel(dep.coord),
+			Coord:      dep.Coord,
+			Packages:   dep.Packages,
+			BazelLabel: mii.coordToBazelLabel(dep.Coord),
 		})
 	}
 
+	log.Printf("Found %d maven artifacts", len(artifacts))
 	mii.artifacts = artifacts
 	return nil
 }

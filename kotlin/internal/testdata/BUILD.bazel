@@ -1,0 +1,5 @@
+filegroup(
+    name = "testdata",
+    srcs = ["maven_install.json"],
+    visibility = ["//kotlin:__subpackages__"],
+)

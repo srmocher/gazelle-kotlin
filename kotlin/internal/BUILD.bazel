@@ -21,8 +21,12 @@ go_library(
 
 go_test(
     name = "internal_test",
-    srcs = ["kotlinparser_test.go"],
+    srcs = [
+        "kotlinparser_test.go",
+        "maven_test.go",
+    ],
     data = [
+        "//kotlin/internal/testdata",
         "//kotlin/test/com/github/srmocher/gazelle_kotlin/kotlinparser/testdata",
     ],
     embed = [":internal"],
