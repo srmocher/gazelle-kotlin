@@ -4,3 +4,7 @@ bazel-out
 bazel-testlogs
 .ijwb/
 kotlin/protobuf/*.pb.go
+.idea/modules.xml
+.idea/gazelle-kotlin.iml
+.idea/vcs.xml
+.idea/.gitignore

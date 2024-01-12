@@ -15,9 +15,8 @@ var nonAlphanumericRegex = regexp.MustCompile(`[^a-zA-Z0-9 ]+`)
 // MavenArtifact represents a maven artifact
 // It's maven coordinate, the set of packages it provides and the resolved Bazel label
 type MavenArtifact struct {
-	Coord      string
-	Packages   []string
-	BazelLabel string
+	Coord    string
+	Packages []string
 }
 
 // MavenInstallInfo represents the information extracted from maven_install.json
@@ -45,7 +44,7 @@ func NewMavenInstallInfo(mavenInstallJsonFile string, mavenRepoName string) *Mav
 	}
 }
 
-func (mii *MavenInstallInfo) coordToBazelLabel(coord string) string {
+func (mii *MavenInstallInfo) CoordToBazelLabel(coord string) string {
 	parts := strings.Split(coord, ":")
 	groupId := nonAlphanumericRegex.ReplaceAllString(parts[0], "_")
 	artifactId := nonAlphanumericRegex.ReplaceAllString(parts[1], "_")
@@ -76,9 +75,8 @@ func (mii *MavenInstallInfo) ProcessDeps() error {
 	var artifacts []MavenArtifact
 	for _, dep := range mvn.DepTree.Deps {
 		artifacts = append(artifacts, MavenArtifact{
-			Coord:      dep.Coord,
-			Packages:   dep.Packages,
-			BazelLabel: mii.coordToBazelLabel(dep.Coord),
+			Coord:    dep.Coord,
+			Packages: dep.Packages,
 		})
 	}
 
@@ -90,4 +88,24 @@ func (mii *MavenInstallInfo) ProcessDeps() error {
 // GetMavenArtifacts returns the set of MavenArtifacts extracted from the maven_install.json file
 func (mii *MavenInstallInfo) GetMavenArtifacts() []MavenArtifact {
 	return mii.artifacts
+}
+
+func (mii *MavenInstallInfo) GetMavenArtifactFromImport(imp string) *MavenArtifact {
+	isExternal := false
+	var mvnArtifact MavenArtifact
+	for _, artifact := range mii.artifacts {
+		for _, pkg := range artifact.Packages {
+			if strings.HasPrefix(imp, pkg) {
+				isExternal = true
+				mvnArtifact = artifact
+				break
+			}
+		}
+	}
+
+	if !isExternal {
+		return nil
+	}
+
+	return &mvnArtifact
 }
