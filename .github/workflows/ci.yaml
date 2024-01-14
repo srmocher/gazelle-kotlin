@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Test
-        run: bazel test //...
+        run: bazel test //... --local_test_jobs=1
 
   lint:
     runs-on: ubuntu-latest
