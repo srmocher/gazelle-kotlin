@@ -29,7 +29,7 @@ func testConfig(t *testing.T, repoRoot string) (*config.Config, []language.Langu
 	langs := []language.Language{pl, lang}
 	c := testtools.NewTestConfig(t, cexts, langs, []string{
 		"-build_file_name=BUILD.old",
-		"-repo_root=" + repoRoot,
+		"-repo_root=/Users/smocherla/src/gazelle-kotlin/kotlin/" + repoRoot,
 	})
 	cexts = append(cexts, pl, lang)
 	return c, langs, cexts

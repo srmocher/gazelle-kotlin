@@ -17,4 +17,5 @@ kt_jvm_library(
 kt_jvm_proto_library(
     name = "kt_proto_foo",
     visibility = ["//visibility:public"],
+    deps = [":foo_proto"],
 )

@@ -142,17 +142,21 @@ func genProtoRules(rel string, otherGen []*rule.Rule) ([]*rule.Rule, []*packageI
 	}
 
 	javaPkg := getJavaPackage(rel, protoPkg)
+	protoRuleName := fmt.Sprintf("kt_proto_%s", protoPkg.Name)
 	if protoPkg.HasServices {
 		// grpc target
 		grpcRule := rule.NewRule("kt_jvm_grpc_library", fmt.Sprintf("kt_grpc_%s", protoPkg.Name))
 		grpcRule.SetAttr("visibility", []string{"//visibility:public"})
+		grpcRule.SetAttr("srcs", []string{fmt.Sprintf(":%s", protoPkg.RuleName)})
+		grpcRule.SetAttr("deps", []string{fmt.Sprintf(":%s", protoRuleName)})
 		pkgImportInfos = append(pkgImportInfos, &packageImportInfo{
 			PackageName: javaPkg,
 		})
 		rules = append(rules, grpcRule)
 	}
 
-	protoRule := rule.NewRule("kt_jvm_proto_library", fmt.Sprintf("kt_proto_%s", protoPkg.Name))
+	protoRule := rule.NewRule("kt_jvm_proto_library", protoRuleName)
+	protoRule.SetAttr("deps", []string{fmt.Sprintf(":%s", proto.RuleName(protoPkg.Name))})
 	protoRule.SetAttr("visibility", []string{"//visibility:public"})
 	pkgImportInfos = append(pkgImportInfos, &packageImportInfo{
 		PackageName: javaPkg,
