@@ -7,6 +7,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/srmocher/gazelle-kotlin/kotlin/internal"
 	"log"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -65,12 +66,12 @@ func (kc *KotlinConfig) clone() *KotlinConfig {
 	return kc
 }
 
-func parseMavenRepoDirective(mavenRepoDirective string) (*internal.MavenInstallInfo, error) {
+func parseMavenRepoDirective(repoRoot string, mavenRepoDirective string) (*internal.MavenInstallInfo, error) {
 	parts := strings.Split(mavenRepoDirective, " ")
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("kt_maven_repo directive should specify the maven repo name followed by the repo relative path to the maven_install json file")
 	}
-	return internal.NewMavenInstallInfo(parts[1], parts[0]), nil
+	return internal.NewMavenInstallInfo(filepath.Join(repoRoot, parts[1]), parts[0]), nil
 }
 
 func (*kotlinLang) Configure(c *config.Config, rel string, f *rule.File) {
@@ -104,7 +105,7 @@ func (*kotlinLang) Configure(c *config.Config, rel string, f *rule.File) {
 				}
 				kc.javaEnabled = javaEnabled
 			case "kt_maven_repo":
-				mii, err := parseMavenRepoDirective(directive.Value)
+				mii, err := parseMavenRepoDirective(c.RepoRoot, directive.Value)
 				if err != nil {
 					log.Print(err)
 					continue
@@ -135,6 +136,8 @@ func GetKotlinConfig(c *config.Config) *KotlinConfig {
 
 func (kl *kotlinLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	var kc *KotlinConfig
+	var kp *internal.KotlinParser
+	var err error
 	if raw, ok := c.Exts[kotlinName]; !ok {
 		kc = newKotlinConfig()
 		c.Exts[kotlinName] = kc
@@ -142,9 +145,11 @@ func (kl *kotlinLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 		kc = raw.(*KotlinConfig).clone()
 	}
 
-	kp, err := internal.NewKotlinParser()
-	if err != nil {
-		return err
+	if kc.kotlinParser == nil {
+		kp, err = internal.NewKotlinParser()
+		if err != nil {
+			return err
+		}
 	}
 	kc.kotlinParser = kp
 	kl.kotlinParser = kp

@@ -36,7 +36,7 @@ func (*kotlinLang) Embeds(r *rule.Rule, from label.Label) []label.Label {
 }
 
 func isStandardImport(imp string) bool {
-	return strings.HasPrefix(imp, "kotlin.")
+	return strings.HasPrefix(imp, "kotlin.") || strings.HasPrefix(imp, "java.") || strings.HasPrefix(imp, "javax.")
 }
 
 func (*kotlinLang) Resolve(c *config.Config, ix *resolve.RuleIndex, rc *repo.RemoteCache, r *rule.Rule, imports interface{}, from label.Label) {
@@ -55,7 +55,7 @@ func (*kotlinLang) Resolve(c *config.Config, ix *resolve.RuleIndex, rc *repo.Rem
 	}
 
 	for _, imp := range pkgImportInfo.OtherImports {
-		// No need for an explicit dep if it's a standard lib import
+		// No need for an explicit dep if it's a standard simple import
 		if isStandardImport(imp) {
 			continue
 		}

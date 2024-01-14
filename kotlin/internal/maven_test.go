@@ -21,8 +21,8 @@ func TestGetMavenArtifactsSuccess(t *testing.T) {
 		"aQute.bnd.signatures",
 		"aQute.bnd.stream",
 		"aQute.bnd.unmodifiable",
-		"aQute.lib.io",
-		"aQute.lib.stringrover",
+		"aQute.simple.io",
+		"aQute.simple.stringrover",
 		"aQute.libg.glob"})
 	assert.Equal(t, mii.artifacts[2].Coord, "com.benasher44:uuid-jvm:0.2.2")
 	assert.Equal(t, mii.artifacts[2].Packages, []string{"com.benasher44.uuid"})

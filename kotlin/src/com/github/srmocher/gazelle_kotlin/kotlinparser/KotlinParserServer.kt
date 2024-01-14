@@ -34,6 +34,7 @@ class KotlinParserServer(private val port: Int) {
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 println("*** shutting down gRPC server since JVM is shutting down")
+                Files.deleteIfExists(portFile)
                 this@KotlinParserServer.stop()
                 println("*** server shut down")
             },

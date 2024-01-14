@@ -1,4 +1,4 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "kotlin",
@@ -23,5 +23,26 @@ go_library(
         "@bazel_gazelle//repo:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
+    ],
+)
+
+go_test(
+    name = "kotlin_test",
+    srcs = ["generate_test.go"],
+    data = glob(
+        ["testdata/**"],
+    ) + ["//kotlin/src/com/github/srmocher/gazelle_kotlin/kotlinparser:parser_server"],
+    embed = [":kotlin"],
+    deps = [
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//language:go_default_library",
+        "@bazel_gazelle//merger:go_default_library",
+        "@bazel_gazelle//resolve:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+        "@bazel_gazelle//testtools:go_default_library",
+        "@bazel_gazelle//walk:go_default_library",
+        "@com_github_bazelbuild_buildtools//build",
+        "@com_github_google_go_cmp//cmp",
+        "@com_github_stretchr_testify//assert",
     ],
 )

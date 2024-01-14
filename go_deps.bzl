@@ -22,8 +22,8 @@ def go_dependencies():
     go_repository(
         name = "com_github_bazelbuild_rules_go",
         importpath = "github.com/bazelbuild/rules_go",
-        sum = "h1:uJStI9o5obVWSwquy9WxKNWfZxf2sKA2rpEsX6x5RVM=",
-        version = "v0.44.0",
+        sum = "h1:ZPsHcsau3SXFQJOpqD+Ey9/RU6qjiUhdTAZI+Q8e2gY=",
+        version = "v0.45.0",
     )
     go_repository(
         name = "com_github_bmatcuk_doublestar_v4",
@@ -214,8 +214,8 @@ def go_dependencies():
     go_repository(
         name = "org_golang_google_genproto",
         importpath = "google.golang.org/genproto",
-        sum = "h1:W12Pwm4urIbRdGhMEg2NM9O3TWKjNcxQhs46V0ypf/k=",
-        version = "v0.0.0-20231127180814-3a041ad873d4",
+        sum = "h1:wpZ8pe2x1Q3f2KyT5f8oP/fa9rHAKgFPr/HZdNuS+PQ=",
+        version = "v0.0.0-20231106174013-bbf56f31fb17",
     )
     go_repository(
         name = "org_golang_google_genproto_googleapis_api",
