@@ -65,8 +65,11 @@ func (*kotlinLang) GenerateRules(args language.GenerateArgs) language.GenerateRe
 		imports = append(imports, pii)
 	}
 
+	var gen []*rule.Rule
+	gen = append(gen, rules...)
+	gen = append(gen, protoRules...)
 	return language.GenerateResult{
-		Gen:     append(rules, protoRules...),
+		Gen:     gen,
 		Imports: imports,
 	}
 }
@@ -141,7 +144,7 @@ func genProtoRules(rel string, otherGen []*rule.Rule) ([]*rule.Rule, []*packageI
 	javaPkg := getJavaPackage(rel, protoPkg)
 	if protoPkg.HasServices {
 		// grpc target
-		grpcRule := rule.NewRule("kt_jvm_grpc_library", "kt_grpc_library")
+		grpcRule := rule.NewRule("kt_jvm_grpc_library", fmt.Sprintf("kt_grpc_%s", protoPkg.Name))
 		grpcRule.SetAttr("visibility", []string{"//visibility:public"})
 		pkgImportInfos = append(pkgImportInfos, &packageImportInfo{
 			PackageName: javaPkg,
@@ -149,7 +152,7 @@ func genProtoRules(rel string, otherGen []*rule.Rule) ([]*rule.Rule, []*packageI
 		rules = append(rules, grpcRule)
 	}
 
-	protoRule := rule.NewRule("kt_jvm_proto_library", "kt_proto_library")
+	protoRule := rule.NewRule("kt_jvm_proto_library", fmt.Sprintf("kt_proto_%s", protoPkg.Name))
 	protoRule.SetAttr("visibility", []string{"//visibility:public"})
 	pkgImportInfos = append(pkgImportInfos, &packageImportInfo{
 		PackageName: javaPkg,
