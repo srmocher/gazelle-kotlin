@@ -54,14 +54,14 @@ func (*kotlinLang) ApparentLoads(moduleToApparentName func(string) string) []rul
 }
 
 func apparentLoads(moduleToApparentName func(string) string) []rule.LoadInfo {
-	rulesGo := moduleToApparentName("rules_kotlin")
-	if rulesGo == "" {
-		rulesGo = "io_bazel_rules_kotlin"
+	rulesKotlin := moduleToApparentName("rules_kotlin")
+	if rulesKotlin == "" {
+		rulesKotlin = "io_bazel_rules_kotlin"
 	}
 
 	return []rule.LoadInfo{
 		{
-			Name: fmt.Sprintf("@%s//kotlin:jvm.bzl", rulesGo),
+			Name: fmt.Sprintf("@%s//kotlin:jvm.bzl", rulesKotlin),
 			Symbols: []string{
 				"kt_jvm_library",
 				"kt_jvm_test",
